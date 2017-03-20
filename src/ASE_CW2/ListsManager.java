@@ -132,7 +132,7 @@ public class ListsManager  {
 		try {
 			String [] inline = line.split(",");
 			regNumber = inline[0];
-			int maxPassNo=3;
+			maxPassNo=Integer.valueOf(inline[1]);
 			
 
 			Taxi j = new Taxi(regNumber,maxPassNo);
