@@ -1,5 +1,6 @@
 package ASE_CW2;
 
+import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
 
 public class Kiosk extends Thread {
@@ -12,8 +13,7 @@ public class Kiosk extends Thread {
 		this.PassengerGroupList=PassengerGroupList;
 	}
 	
-	
-	
+		
 	/*the method that returns the index of the taxi 
 	 * that has enough seats for the 
 	 * first passenger group in the queue*/
@@ -27,27 +27,40 @@ public class Kiosk extends Thread {
 		return -1;
 	}
 	
-	/* the method that allocates passenger groups
+	
+	/*the method that allocates passenger groups
 	 * with the taxi that is available and has
 	 * enough seats for this group*/ 
 	
-	public void run(){
+	public synchronized void  run(){
 		String output="";
 		try {
+			
+			
+			
 			while ((TaxiList.size()>0) && (PassengerGroupList.size()>0))
 			{
+				double rand=Math.random()*500;
+				int randInt = (int)rand;
+				Thread.sleep(randInt);
 				if (taxiIndexWithEnoughSeats()!=-1)
 				{
-				output="\nDestination:  "+PassengerGroupList.get(0).getDestination()+"\nPassengers:  "
+				output="\nGroup:  "+PassengerGroupList.get(0).getGroupName()+ "\nDestination " + PassengerGroupList.get(0).getDestination()+"\nPassengers:  "
 						+PassengerGroupList.get(0).getPassengersNumber()+
 						"\nTaxi No: "+TaxiList.get(taxiIndexWithEnoughSeats()).getPlateNumber();
 				System.out.print(output);
+				System.out.print(Thread.currentThread()+"\n\n");
 				TaxiList.remove(taxiIndexWithEnoughSeats());
 				PassengerGroupList.remove(0);
 				}
+				
 			}
 		} 
+		catch (InterruptedException e) {
+			System.out.println(e.getMessage());
+			}
 		catch (IndexOutOfBoundsException e) {
+			output="\n\n"+PassengerGroupList.size()+" passenger groups left in the queue"+TaxiList.size()+" taxis are still available";
 			System.out.print("No enough parameters");
 		} 
 		if (TaxiList.isEmpty()) {
