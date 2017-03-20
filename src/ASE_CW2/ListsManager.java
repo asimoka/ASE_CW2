@@ -23,6 +23,7 @@ public class ListsManager  {
 	
 	private String	 regNumber;
 	private String 	 destination;
+	private String   groupName;
 	private int 	 numPassengers;
 	
 
@@ -108,8 +109,8 @@ public class ListsManager  {
 			String [] inline = line.split(",");
 			numPassengers = Integer.valueOf(inline[0]);
 			destination=inline[1];
-			
-			PassengerGroup pg = new PassengerGroup(numPassengers, destination);
+			groupName=inline[2];			
+			PassengerGroup pg = new PassengerGroup(numPassengers, destination, groupName);
 			PassengerGroupList.add(pg);
 		} 
 		catch (InputMismatchException ime) {
