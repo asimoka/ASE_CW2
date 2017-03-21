@@ -1,3 +1,5 @@
+package ASE_CW2;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,15 +10,6 @@ import java.util.Calendar;
 public final class KioskLog{
 	//Creates a singleton log instance
 	private static final KioskLog log = new KioskLog();
-	
-	/*private String regnumber = "12AB345";
-	public String getRegNumber() {
-		return regnumber;
-	}
-	private int passengergroup = 3;
-	public int getPassengerGroup() {
-		return passengergroup;
-	}*/
 
 	//Retrieve the execution directory. Note that this is where ever this process was launched
 	public String lognm = "KioskLog";
@@ -78,10 +71,7 @@ public final class KioskLog{
 			System.err.println("ERROR: Could not write to log file");
 		}
 	}
-
-	/*public static void main(String[] args) {
-		SimpleLog.log("Log Message \r\n");
-		 SimpleLog.log("Taxi=" + SimpleLog.getInstance().getRegNumber() + "Passenger Group=" + SimpleLog.getInstance().getPassengerGroup());
-	}*/
-
+//Use this format to insert logging in process
+//KioskLog.log("Taxi: " + TaxiList.get(taxiNum).getPlateNumber() + " ~~ Matched with Group: " + PassengerGroupList.get(0).getGroupName() + " ~~ Destination: " + PassengerGroupList.get(0).getDestination() + "\r\n");
+	
 }

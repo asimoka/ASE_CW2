@@ -12,9 +12,9 @@ package ASE_CW2;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+//import java.util.Map;
+//import java.util.Scanner;
+//import java.util.Set;
 
 public class ListsManager  {
 
@@ -25,6 +25,7 @@ public class ListsManager  {
 	private String 	 destination;
 	private String   groupName;
 	private int 	 numPassengers;
+	private int		 maxPassNo;
 	
 
 	public ListsManager()
@@ -53,6 +54,7 @@ public class ListsManager  {
 	private void addRides() 
 	    {
 	        //load staff data from file
+		
 	        BufferedReader passBuff = null;
 	        BufferedReader taxiBuff = null;
 	        
@@ -65,6 +67,7 @@ public class ListsManager  {
 		    	{  
 		    		//stores details from this line in RideList class
 		    		processLinePassengers(inputPassengersLine);
+					KioskLog.log("Passenger Group: " + groupName + " added to Passenger Queue list ~~ Size: " + numPassengers + " Destination: " + destination + "\r\n");
 		            //read next line
 		            inputPassengersLine = passBuff.readLine();
 		        }
@@ -76,6 +79,7 @@ public class ListsManager  {
 		    	{  
 		    		//stores details from this line in RideList class
 		    		processLineTaxi(inputTaxiLine);
+					KioskLog.log("Taxi: " + regNumber + " added to Taxi Queue list ~~ Max Passengers: " + maxPassNo + "\r\n");
 		            //read next line
 		            inputTaxiLine = taxiBuff.readLine();
 		        }
@@ -193,6 +197,7 @@ public class ListsManager  {
 			TaxiList.remove(0);
 			PassengerGroupList.remove(0);
 		}
+		
 		return output;
 	}
 	

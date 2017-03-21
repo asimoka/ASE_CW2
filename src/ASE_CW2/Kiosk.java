@@ -1,77 +1,124 @@
 package ASE_CW2;
 
-import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
+//import java.util.LinkedList;
+//import java.util.List;
 
-public class Kiosk extends Thread {
+public class Kiosk {
 	
 	private ArrayList<Taxi> TaxiList;
 	private ArrayList<PassengerGroup> PassengerGroupList;
+	private boolean finished = false;
 	
 	public Kiosk(ArrayList<Taxi> TaxiList, ArrayList<PassengerGroup> PassengerGroupList){
 		this.TaxiList=TaxiList;
 		this.PassengerGroupList=PassengerGroupList;
 	}
 	
-		
+	public boolean isFinished() {
+		return finished;
+	}
+	
 	/*the method that returns the index of the taxi 
 	 * that has enough seats for the 
 	 * first passenger group in the queue*/
 	
-	public int taxiIndexWithEnoughSeats()
-	{
-		for (int i=0;i<=TaxiList.size();i++)
-		{
-			if (PassengerGroupList.get(0).getPassengersNumber()<=TaxiList.get(i).getMaxPassengersNumber()){return i;}
+//	public int taxiIndexWithEnoughSeats()
+//	{
+//		for (int i=0;i<TaxiList.size();i++)
+//		{
+//			if (PassengerGroupList.get(0).getPassengersNumber()<=TaxiList.get(i).getMaxPassengersNumber()){return i;}
+//		}
+//		return -1;
+//	}
+	
+	public int findAppropriateTaxi(int numPassengers) {
+		if (numPassengers <= 3) {
+			for (int i=0;i<TaxiList.size();i++)
+			{
+				if (TaxiList.get(i).getMaxPassengersNumber()==3){return i;}
+			}	
 		}
+		
+		
+		if (numPassengers <= 5) {
+			for (int i=0;i<TaxiList.size();i++)
+			{
+				if (TaxiList.get(i).getMaxPassengersNumber()==5){return i;}
+			}
+		}
+
+		if (numPassengers <= 7) {
+			for (int i=0;i<TaxiList.size();i++)
+			{
+				if (TaxiList.get(i).getMaxPassengersNumber()==7){return i;}
+			}
+		}		
+		
 		return -1;
 	}
 	
 	
-	/*the method that allocates passenger groups
-	 * with the taxi that is available and has
-	 * enough seats for this group*/ 
-	
-	public synchronized void  run(){
+	public synchronized String matchJourney(){
 		String output="";
+
 		try {
-			
-			
-			
-			while ((TaxiList.size()>0) && (PassengerGroupList.size()>0))
+			int taxiNum = findAppropriateTaxi(PassengerGroupList.get(0).getPassengersNumber());
+			////////////////////////////////////////////
+			if (taxiNum == -1)
 			{
-				double rand=Math.random()*500;
-				int randInt = (int)rand;
-				Thread.sleep(randInt);
-				if (taxiIndexWithEnoughSeats()!=-1)
-				{
-				output="\nGroup:  "+PassengerGroupList.get(0).getGroupName()+ "\nDestination " + PassengerGroupList.get(0).getDestination()+"\nPassengers:  "
-						+PassengerGroupList.get(0).getPassengersNumber()+
-						"\nTaxi No: "+TaxiList.get(taxiIndexWithEnoughSeats()).getPlateNumber();
-				System.out.print(output);
-				System.out.print(Thread.currentThread()+"\n\n");
-				TaxiList.remove(taxiIndexWithEnoughSeats());
+				System.out.println("stuff" + TaxiList.get(taxiNum).getPlateNumber());
+			}
+			if (taxiNum!=-1)
+			{
+
+				//Append Log to Logfile
+				KioskLog.log("MATCH~~ Taxi: " + TaxiList.get(taxiNum).getPlateNumber() + " ~~ Matched with Group: " + PassengerGroupList.get(0).getGroupName() + " ~~ Destination: " + PassengerGroupList.get(0).getDestination() + "\r\n");
+						
+				output="\nDestination:  "+PassengerGroupList.get(0).getDestination()+"\nPassengers:  "+PassengerGroupList.get(0).getPassengersNumber()+
+						"\nTaxi No: "+TaxiList.get(taxiNum).getPlateNumber();
+				TaxiList.remove(taxiNum);
 				PassengerGroupList.remove(0);
+				System.out.println(output);
+			}
+			else {
+				
+				System.out.println("Group: " + PassengerGroupList.get(0).getPassengersNumber());
+				for (int i=0; i<TaxiList.size(); i++) {
+					System.out.println("taxi: " + TaxiList.get(i).getPlateNumber());
 				}
 				
+				PassengerGroupList.add(PassengerGroupList.get(0));
+				PassengerGroupList.remove(0);
+				output = "no taxis big enough";
+				
 			}
-		} 
-		catch (InterruptedException e) {
-			System.out.println(e.getMessage());
+			if (TaxiList.size() == 0 || PassengerGroupList.size() == 0) {
+				finished = true;
 			}
+		}
+		
 		catch (IndexOutOfBoundsException e) {
-			output="\n\n"+PassengerGroupList.size()+" passenger groups left in the queue"+TaxiList.size()+" taxis are still available";
-			System.out.print("No enough parameters");
+			//System.out.print("No enough parameters");
 		} 
 		if (TaxiList.isEmpty()) {
-			output="\n\nNo available taxis at the moment.  \n"+PassengerGroupList.size()+" passenger groups left in the queue";
-			
+			output="No available taxis at the moment";
+			KioskLog.log("No taxis left in queue. \r\n");
+			//notifyObservers();
 		} 
 		else if (PassengerGroupList.isEmpty()) {
-			output="\n\nNo Passengers in the queue.  \n"+TaxiList.size()+" taxis are still available";
+			output="No Passengers in the queue";
+			KioskLog.log("No passenger groups left in queue. \r\n");
+			finished = true;
+			//notifyObservers();
 		}
-		System.out.print(output);
+		return output;
+		
 	}
+
+
+	
+
 	
 	
 
